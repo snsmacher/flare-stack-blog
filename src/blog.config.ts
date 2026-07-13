@@ -1,13 +1,13 @@
 import type { SiteConfig } from "@/features/config/site-config.schema";
 
 export const blogConfig = {
-  title: "站点名称",
-  author: "作者",
+  title: "escsn",
+  author: "snsm",
   description:
     "这是我的个人网站和博客。在这里，我主要分享与技术和生活相关的内容。欢迎阅读！",
   social: [
-    { platform: "github", url: "https://github.com/example" },
-    { platform: "email", url: "mailto:example@email.com" },
+    { platform: "github", url: "https://github.com/snsmacher" },
+    { platform: "email", url: "3566819241@qq.com" },
     { platform: "rss", url: "/rss.xml" },
   ],
   icons: {
