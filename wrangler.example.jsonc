@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "my-blog",
+  "name": "escsn",
   "compatibility_date": "2026-02-17",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "main": "./src/server.ts",
@@ -14,7 +14,7 @@
       "custom_domain": true
     }
   ],
-  "d1_databases": [
+  "d1_databases": [dd27906b-1534-45f9-a38c-cc35fbdae4c6
     {
       "binding": "DB",
       "database_id": "D1_DATABASE_ID",
@@ -22,14 +22,14 @@
       "remote": true
     }
   ],
-  "r2_buckets": [
+  "r2_buckets": [blog
     {
       "bucket_name": "bucket-name-placeholder",
       "binding": "R2",
       "remote": true
     }
   ],
-  "kv_namespaces": [
+  "kv_namespaces": [3747f82e40e54a3d8fdcb1fbbd0ac020
     {
       "binding": "KV",
       "id": "KV_NAMESPACE_ID",
