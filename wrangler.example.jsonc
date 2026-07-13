@@ -14,30 +14,30 @@
       "custom_domain": true
     }
   ],
-  "d1_databases": [dd27906b-1534-45f9-a38c-cc35fbdae4c6
+  "d1_databases": [
     {
       "binding": "DB",
-      "database_id": "D1_DATABASE_ID",
+      "database_id": "dd27906b-1534-45f9-a38c-cc35fbdae4c6",
       "migrations_dir": "migrations",
       "remote": true
     }
   ],
-  "r2_buckets": [blog
+  "r2_buckets": [
     {
       "bucket_name": "bucket-name-placeholder",
-      "binding": "R2",
+      "binding": "blog",
       "remote": true
     }
   ],
-  "kv_namespaces": [3747f82e40e54a3d8fdcb1fbbd0ac020
+  "kv_namespaces": [
     {
       "binding": "KV",
-      "id": "KV_NAMESPACE_ID",
+      "id": "3747f82e40e54a3d8fdcb1fbbd0ac020",
       "remote": true
     },
     {
       "binding": "OAUTH_KV",
-      "id": "KV_NAMESPACE_ID",
+      "id": "3747f82e40e54a3d8fdcb1fbbd0ac020",
       "remote": true
     }
   ],
