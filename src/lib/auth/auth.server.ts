@@ -111,28 +111,18 @@ export function getAuth({ db, env }: { db: DB; env: Env }) {
     },
     emailVerification: {
       sendVerificationEmail: async ({ user, url }) => {
-        console.log("[EMAIL_DEBUG] sendVerificationEmail called", JSON.stringify({ email: user.email }));
-
         // Per-email rate limit: 3 per hour — silently skip if exceeded
         const allowed = await checkEmailRateLimit(
           env,
           "email-verify",
           user.email,
         );
-
-        console.log("[EMAIL_DEBUG] email-verify rate limit result:", allowed);
-
-        if (!allowed) {
-          console.log("[EMAIL_DEBUG] email-verify RATE LIMITED, skipping");
-          return;
-        }
+        if (!allowed) return;
 
         const locale = getAuthEmailLocale();
         const emailHtml = renderToStaticMarkup(
           AuthEmail({ locale, type: "verification", url }),
         );
-
-        console.log("[EMAIL_DEBUG] sending to queue...");
 
         await env.QUEUE.send({
           type: "EMAIL",
@@ -142,8 +132,6 @@ export function getAuth({ db, env }: { db: DB; env: Env }) {
             html: emailHtml,
           },
         });
-
-        console.log("[EMAIL_DEBUG] queued successfully");
       },
       autoSignInAfterVerification: true,
     },
