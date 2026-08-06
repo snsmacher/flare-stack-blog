@@ -97,15 +97,20 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
           href: "/feed.json",
         },
       ],
-      scripts: env.VITE_UMAMI_WEBSITE_ID
-        ? [
-            {
+      scripts: [
+        {
+          src: "https://analytics.septa.dpdns.org/track.js",
+          defer: true,
+          "data-host": "https://analytics.septa.dpdns.org",
+        },
+        ...(env.VITE_UMAMI_WEBSITE_ID
+          ? [{
               src: "/stats.js",
               defer: true,
               "data-website-id": env.VITE_UMAMI_WEBSITE_ID,
-            },
-          ]
-        : [],
+            }]
+          : []),
+      ],
     };
   },
   shellComponent: RootDocument,
