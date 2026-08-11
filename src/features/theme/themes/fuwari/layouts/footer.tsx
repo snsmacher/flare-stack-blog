@@ -41,7 +41,7 @@ export function Footer(_: FooterProps) {
           </a>{" "}
           /{" "}
           <a
-            href="https://uptime.septa.dpdns.org"
+            href="status.septa.dpdns.org"
             target="_blank"
             rel="noreferrer"
             className="fuwari-expand-animation rounded-md px-1 -m-1 font-medium hover:text-(--fuwari-primary) text-(--fuwari-primary)"
