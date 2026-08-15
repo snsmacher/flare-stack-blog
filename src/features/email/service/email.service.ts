@@ -1,5 +1,6 @@
 import { type AuthType, WorkerMailer } from "worker-mailer";
 import * as ConfigService from "@/features/config/service/config.service";
+import * as ConfigRepo from "@/features/config/data/config.data";
 import * as EmailData from "@/features/email/data/email.data";
 import type { TestEmailConnectionInput } from "@/features/email/email.schema";
 import { verifyUnsubscribeToken } from "@/features/email/email.utils";
@@ -255,6 +256,68 @@ export async function sendEmail(
       reason: "SEND_FAILED",
       message: errorMessage,
     });
+  }
+
+  return ok({ success: true });
+}
+export async function sendEmailDirect(
+  context: { db: DB; env: Env },
+  options: {
+    to: string;
+    subject: string;
+    html: string;
+    headers?: Record<string, string>;
+  },
+) {
+  const rawConfig = await ConfigRepo.getSystemConfig(context.db);
+  const email = ConfigService.resolveSystemConfig(rawConfig).email;
+
+  if (!isEmailConfigured(email)) {
+    console.warn(
+      `[EMAIL_SERVICE] 未配置邮件服务，跳过发送至: ${options.to}（请在管理后台「邮件」设置中保存 SMTP 配置）`,
+    );
+    return err({ reason: "EMAIL_DISABLED" });
+  }
+
+  try {
+    const security = resolveTransportSecurity(email.port);
+
+    await WorkerMailer.send(
+      {
+        host: email.host,
+        port: email.port,
+        authType: getSmtpAuthTypes(),
+        credentials: {
+          username: email.username,
+          password: email.password,
+        },
+        ...security,
+      },
+      {
+        from: {
+          name: email.senderName,
+          email: email.senderAddress,
+        },
+        to: options.to,
+        subject: options.subject,
+        html: options.html,
+        headers: options.headers,
+      },
+    );
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : "unknown error";
+    console.error(
+      JSON.stringify({
+        message: "email direct send failed",
+        host: email.host,
+        port: email.port,
+        to: options.to,
+        subject: options.subject,
+        error: errorMessage,
+      }),
+    );
+    return err({ reason: "SEND_FAILED", message: errorMessage });
   }
 
   return ok({ success: true });
