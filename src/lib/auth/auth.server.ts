@@ -4,6 +4,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { betterAuth } from "better-auth/minimal";
 import { renderToStaticMarkup } from "react-dom/server";
 import { AuthEmail } from "@/features/email/templates/AuthEmail";
+import { sendEmailDirect } from "@/features/email/service/email.service";
 import { createAuthConfig } from "@/lib/auth/auth.config";
 import * as authSchema from "@/lib/db/schema/auth.table";
 import { serverEnv } from "@/lib/env/server.env";
@@ -86,52 +87,54 @@ export function getAuth({ db, env }: { db: DB; env: Env }) {
           getPasswordHasher().verify(params),
       },
       sendResetPassword: async ({ user, url }) => {
-        // Per-email rate limit: 3 per hour — silently skip if exceeded
-        const allowed = await checkEmailRateLimit(
-          env,
-          "email-reset",
-          user.email,
-        );
-        if (!allowed) return;
-
         const locale = getAuthEmailLocale();
         const emailHtml = renderToStaticMarkup(
           AuthEmail({ locale, type: "reset-password", url }),
         );
 
-        await env.QUEUE.send({
-          type: "EMAIL",
-          data: {
+        const result = await sendEmailDirect(
+          { db, env },
+          {
             to: user.email,
             subject: m.email_auth_reset_subject({}, { locale }),
             html: emailHtml,
           },
-        });
+        );
+        if (result.error) {
+          console.error(
+            JSON.stringify({
+              event: "reset_password_email_failed",
+              to: user.email,
+              reason: result.error.reason,
+            }),
+          );
+        }
       },
     },
     emailVerification: {
       sendVerificationEmail: async ({ user, url }) => {
-        // Per-email rate limit: 3 per hour — silently skip if exceeded
-        const allowed = await checkEmailRateLimit(
-          env,
-          "email-verify",
-          user.email,
-        );
-        if (!allowed) return;
-
         const locale = getAuthEmailLocale();
         const emailHtml = renderToStaticMarkup(
           AuthEmail({ locale, type: "verification", url }),
         );
 
-        await env.QUEUE.send({
-          type: "EMAIL",
-          data: {
+        const result = await sendEmailDirect(
+          { db, env },
+          {
             to: user.email,
             subject: m.email_auth_verification_subject({}, { locale }),
             html: emailHtml,
           },
-        });
+        );
+        if (result.error) {
+          console.error(
+            JSON.stringify({
+              event: "verification_email_failed",
+              to: user.email,
+              reason: result.error.reason,
+            }),
+          );
+        }
       },
       autoSignInAfterVerification: true,
     },
