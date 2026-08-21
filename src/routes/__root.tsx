@@ -105,7 +105,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         },
         ...(env.VITE_UMAMI_WEBSITE_ID
           ? [{
-              src: "/stats.js",
+              src: "https://umami.765528.xyz/stats.js",
               defer: true,
               "data-website-id": env.VITE_UMAMI_WEBSITE_ID,
             }]
